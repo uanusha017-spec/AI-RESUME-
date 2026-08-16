@@ -40,7 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const userMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  // Close user dropdown when clicking outside
+  // Close user dropdown and mobile/tablet menu when clicking outside or pressing Escape
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -54,14 +54,26 @@ export const Navbar: React.FC<NavbarProps> = ({
         setMobileMenuOpen(false);
       }
     };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setUserMenuOpen(false);
+        setMobileMenuOpen(false);
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
-  // Close mobile menu on resize to desktop
+  // Close mobile/tablet menu on resize to desktop (1024px)
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setMobileMenuOpen(false);
       }
     };
@@ -70,11 +82,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   }, []);
 
   const navItems = [
-    { id: 'builder', label: 'Builder', icon: FileText },
-    { id: 'ats-checker', label: 'ATS Checker', icon: CheckCircle2 },
-    { id: 'job-matcher', label: 'Job Matcher', icon: Briefcase },
-    { id: 'templates', label: 'Templates', icon: Layers },
-    { id: 'cover-letters', label: 'Cover Letters', icon: Mail },
+    { id: 'builder', label: 'Builder', icon: FileText, desc: 'Build & edit resume sections with AI' },
+    { id: 'ats-checker', label: 'ATS Checker', icon: CheckCircle2, desc: 'Score keywords & compliance' },
+    { id: 'job-matcher', label: 'Job Matcher', icon: Briefcase, desc: 'Compare against job descriptions' },
+    { id: 'templates', label: 'Templates', icon: Layers, desc: 'ATS-certified formatting templates' },
+    { id: 'cover-letters', label: 'Cover Letters', icon: Mail, desc: 'Craft targeted cover letters' },
   ];
 
   const handleSignOut = () => {
@@ -98,13 +110,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Logo size="sm" showText={true} />
         </button>
 
-        {/* ZONE 2: DESKTOP NAV LINKS (hidden on mobile/tablet) */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
+        {/* ZONE 2: DESKTOP NAV LINKS (Visible on lg 1024px+ screens) */}
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl text-xs xl:text-sm font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 activeTab === item.id
                   ? 'text-blue-600 bg-blue-50 font-semibold'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -115,7 +127,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ))}
         </nav>
 
-        {/* ZONE 3: PRIMARY ACTIONS + AUTH + MOBILE TOGGLE */}
+        {/* ZONE 3: PRIMARY ACTIONS + AUTH + MOBILE/TABLET TOGGLE */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* AI Credits Interactive Pill */}
           <button
@@ -150,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="hidden sm:inline">New Resume</span>
           </button>
 
-          {/* Auth Button / Profile Menu (Desktop) */}
+          {/* Auth Button / Profile Menu (Desktop & Tablet) */}
           {user ? (
             <div className="relative" ref={userMenuRef}>
               <button
@@ -161,7 +173,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="hidden lg:inline font-bold text-xs max-w-[80px] truncate">{user.name.split(' ')[0]}</span>
+                <span className="hidden xl:inline font-bold text-xs max-w-[80px] truncate">{user.name.split(' ')[0]}</span>
                 <ChevronDown className="w-3 h-3 text-slate-400" />
               </button>
 
@@ -250,11 +262,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile & Tablet Menu Toggle Button (Visible on < lg screens) */}
           <button
             data-mobile-toggle
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer flex items-center justify-center min-w-[38px] min-h-[38px] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+            className="lg:hidden p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer flex items-center justify-center min-w-[38px] min-h-[38px] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
             aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             aria-expanded={mobileMenuOpen}
           >
@@ -264,27 +276,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       </div>
 
-      {/* MOBILE DRAWER / FLYOUT */}
+      {/* MOBILE & TABLET DRAWER / FLYOUT */}
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef}
-          className="md:hidden border-t border-slate-200 bg-white/98 backdrop-blur-md px-4 py-4 space-y-3 animate-in slide-in-from-top-2 duration-200 shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto"
+          className="lg:hidden border-t border-slate-200 bg-white/98 backdrop-blur-md px-4 sm:px-6 py-4 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-2xl max-h-[calc(100vh-4rem)] overflow-y-auto"
         >
-          {/* Mobile User Profile Header */}
+          {/* User Profile Header for Mobile / Tablet */}
           {user ? (
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm font-black shadow-xs shrink-0">
+            <div className="p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm font-black shadow-xs shrink-0">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-bold text-slate-900 truncate">{user.name}</div>
-                  <div className="text-[10px] text-slate-500 truncate">{user.email}</div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded">
+                  <div className="text-xs sm:text-sm font-bold text-slate-900 truncate">{user.name}</div>
+                  <div className="text-[11px] text-slate-500 truncate">{user.email}</div>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="px-1.5 py-0.2 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">
                       Pro Active
                     </span>
-                    <span className="font-mono text-[10px] font-bold text-amber-700">
+                    <span className="font-mono text-[11px] font-bold text-amber-700">
                       ⚡ {aiCredits} Credits
                     </span>
                   </div>
@@ -292,31 +304,31 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
               <button
                 onClick={handleSignOut}
-                className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer shrink-0 transition-colors"
+                className="px-3 py-2 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shrink-0 transition-colors"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Log Out</span>
               </button>
             </div>
           ) : (
-            <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-2xl flex items-center justify-between gap-2">
-              <div className="text-xs text-blue-900 font-medium">
-                Sign in to save multiple resumes & track ATS scores
+            <div className="p-3 sm:p-4 bg-blue-50/80 border border-blue-200 rounded-2xl flex items-center justify-between gap-3">
+              <div className="text-xs sm:text-sm text-blue-900 font-medium">
+                Sign in to save multiple resumes, access ATS scores, and sync progress
               </div>
               <button
                 onClick={() => {
                   setActiveTab('login');
                   setMobileMenuOpen(false);
                 }}
-                className="py-2 px-3.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shrink-0 shadow-xs cursor-pointer transition-all"
+                className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shrink-0 shadow-xs cursor-pointer transition-all"
               >
-                Log In
+                Log In / Register
               </button>
             </div>
           )}
 
-          {/* Quick Actions Grid for Mobile */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          {/* Quick Actions Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <button
               onClick={() => {
                 if (onOpenUploadResume) onOpenUploadResume();
@@ -338,55 +350,61 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Gift className="w-4 h-4 text-amber-600 shrink-0" />
               <span>+ Claim Credits</span>
             </button>
-          </div>
-
-          {/* Navigation Links List */}
-          <div className="pt-2 space-y-1 border-t border-slate-100">
-            <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Navigation & Tools
-            </div>
 
             <button
               onClick={() => {
                 setActiveTab('dashboard');
                 setMobileMenuOpen(false);
               }}
-              className={`w-full text-left px-3 py-2.5 text-xs sm:text-sm font-semibold rounded-xl flex items-center gap-3 transition-colors cursor-pointer ${
-                activeTab === 'dashboard'
-                  ? 'text-blue-700 bg-blue-50 font-bold border border-blue-100'
-                  : 'text-slate-700 hover:bg-slate-100'
-              }`}
+              className="col-span-2 sm:col-span-1 py-2.5 px-3 bg-blue-50 hover:bg-blue-100 active:bg-blue-200 border border-blue-200 text-blue-800 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
             >
               <LayoutDashboard className="w-4 h-4 text-blue-600 shrink-0" />
-              <span>My Resumes Dashboard</span>
+              <span>My Resumes</span>
             </button>
+          </div>
 
-            {navItems.map((item) => {
-              const ItemIcon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-3 py-2.5 text-xs sm:text-sm font-semibold rounded-xl flex items-center justify-between transition-colors cursor-pointer ${
-                    isActive
-                      ? 'text-blue-700 bg-blue-50 font-bold border border-blue-100'
-                      : 'text-slate-700 hover:bg-slate-100'
-                  }`}
-                >
-                  <span className="flex items-center gap-3">
-                    <ItemIcon className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600' : 'text-slate-500'}`} />
-                    <span>{item.label}</span>
-                  </span>
-                  {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-                  )}
-                </button>
-              );
-            })}
+          {/* Tablet & Mobile Navigation Links Grid */}
+          <div className="pt-2 space-y-2 border-t border-slate-100">
+            <div className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <span>Resume Tools & Features</span>
+              <span className="hidden sm:inline text-[10px] text-slate-400 lowercase font-normal">tap to open</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {navItems.map((item) => {
+                const ItemIcon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`text-left p-3 rounded-xl flex items-center justify-between transition-all cursor-pointer border ${
+                      isActive
+                        ? 'text-blue-700 bg-blue-50/90 font-bold border-blue-300 shadow-xs'
+                        : 'text-slate-700 hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                        isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        <ItemIcon className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-bold truncate">{item.label}</div>
+                        <div className="text-[10px] text-slate-400 truncate hidden sm:block">{item.desc}</div>
+                      </div>
+                    </div>
+                    {isActive && (
+                      <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Bottom Info / Home link */}
@@ -398,9 +416,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
               className="hover:text-blue-600 font-medium py-1"
             >
-              Home & Features
+              ← Back to Home
             </button>
-            <span className="text-[10px] text-slate-400 font-mono">ResumeAI Pro v2.5</span>
+            <span className="text-[10px] text-slate-400 font-mono">ResumeAI Pro • Tablet & Mobile Optimized</span>
           </div>
 
         </div>
@@ -408,4 +426,5 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+
 
