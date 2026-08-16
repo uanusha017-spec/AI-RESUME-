@@ -29,6 +29,7 @@ import {
   ArrowRight,
   Info
 } from 'lucide-react';
+import heroBannerImg from '../assets/images/hero_career_banner_1786886172807.jpg';
 
 interface AdminSession {
   email: string;
@@ -168,7 +169,16 @@ export const AdminDashboard: React.FC = () => {
   if (!adminSession) {
     return (
       <div className="min-h-[calc(100vh-4rem)] bg-slate-950 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 text-slate-100 font-sans relative overflow-hidden">
-        {/* Background ambient glow effect */}
+        {/* Background ambient banner image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={heroBannerImg}
+            alt="Admin secure background"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center opacity-15"
+          />
+          <div className="absolute inset-0 bg-slate-950/85" />
+        </div>
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 right-10 w-80 h-80 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -322,15 +332,24 @@ export const AdminDashboard: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 py-8 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-7xl mx-auto space-y-6">
         
-        {/* TOP ADMIN BAR */}
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-600 flex items-center justify-center text-white shadow-md">
+        {/* TOP ADMIN BAR BANNER */}
+        <div className="relative overflow-hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
+          <div className="absolute inset-0 z-0">
+            <img
+              src={heroBannerImg}
+              alt="Console banner"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover object-center opacity-15"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-blue-950/80" />
+          </div>
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-600 flex items-center justify-center text-white shadow-md">
               <Terminal className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-black text-white">System Admin & AI Health Console</h1>
+                <h1 className="text-lg sm:text-xl font-black text-white">System Admin & AI Operations Console</h1>
                 <span className="px-2 py-0.5 bg-cyan-950 border border-cyan-800 text-cyan-400 text-[10px] font-mono font-bold rounded-full">
                   {adminSession.role}
                 </span>
@@ -341,7 +360,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="relative z-10 flex flex-wrap items-center gap-2.5">
             <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-800 px-3 py-1.5 rounded-lg">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
               <span>Gemini 2.5 Operational</span>

@@ -20,6 +20,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import heroBannerImg from '../assets/images/hero_career_banner_1786886172807.jpg';
 
 interface LoginPageProps {
   onNavigateToBuilder?: () => void;
@@ -181,8 +182,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-12 bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in">
         
         {/* LEFT / HERO BRAND PANEL (5 COLS) */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 p-6 sm:p-8 text-white flex flex-col justify-between space-y-6">
-          <div className="space-y-4">
+        <div className="relative overflow-hidden lg:col-span-5 bg-slate-950 p-6 sm:p-8 text-white flex flex-col justify-between space-y-6">
+          <div className="absolute inset-0 z-0">
+            <img
+              src={heroBannerImg}
+              alt="Career workspace"
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover object-center opacity-25 scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/95 to-blue-950/90" />
+          </div>
+
+          <div className="relative z-10 space-y-4">
             <Logo size="md" showText={true} className="brightness-125" />
             
             <div className="pt-4 space-y-2">

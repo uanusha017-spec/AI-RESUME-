@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { fetchCareerChat } from '../services/apiClient';
+import { PageBanner } from './PageBanner';
 import {
   Bot,
   Send,
@@ -76,19 +77,15 @@ export const CareerCoach: React.FC = () => {
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         
-        {/* HEADER */}
-        <div className="border-b border-slate-200 pb-6 space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-200 text-purple-800 text-xs font-bold mb-2">
-            <Bot className="w-3.5 h-3.5 text-purple-600" />
-            <span>AI Career Strategist</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-            Interactive Career Coach & Advisor
-          </h1>
-          <p className="text-sm text-slate-600">
-            Ask strategic questions about resume positioning, salary negotiations, promotion roadmaps, and career pivots.
-          </p>
-        </div>
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="Executive Advisory"
+          badgeIcon={<Bot className="w-3.5 h-3.5 text-purple-400" />}
+          title="Interactive Career Coach & Advisor"
+          subtitle="Ask strategic questions about career pivots, salary negotiations, promotion roadmaps, and resume impact framing."
+          imageVariant="workspace"
+          compact={true}
+        />
 
         {/* CHAT CONTAINER */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[580px] overflow-hidden">

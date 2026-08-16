@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { TEMPLATES } from '../data/templates';
 import { ResumeRenderer } from './ResumeTemplates/ResumeRenderer';
+import { PageBanner } from './PageBanner';
 import {
   Layers,
   CheckCircle2,
@@ -46,21 +47,19 @@ export const TemplatesGallery: React.FC<{ onNavigateToBuilder: () => void }> = (
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold mb-2">
-              <Layers className="w-3.5 h-3.5 text-blue-600" />
-              <span>12 Recruiter-Approved Layouts</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-              Resume Templates Gallery
-            </h1>
-            <p className="text-sm text-slate-600">
-              Every template is built with clean HTML hierarchy to guarantee 100% readability by ATS parsers.
-            </p>
-          </div>
-        </div>
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="12 Recruiter-Approved Layouts"
+          badgeIcon={<Layers className="w-3.5 h-3.5 text-blue-400" />}
+          title="Resume Templates Gallery"
+          subtitle="Every template is crafted with strict HTML hierarchy to guarantee 100% readability by Taleo, Greenhouse, and Workday ATS parsers."
+          imageVariant="hero"
+          stats={[
+            { label: 'ATS Classic', value: '4 Layouts', icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> },
+            { label: 'Modern & Clean', value: '4 Layouts', icon: <Sparkles className="w-3.5 h-3.5 text-blue-400" /> },
+            { label: 'Creative & Tech', value: '4 Layouts', icon: <Layers className="w-3.5 h-3.5 text-amber-400" /> },
+          ]}
+        />
 
         {/* CATEGORY FILTER BUTTONS */}
         <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">

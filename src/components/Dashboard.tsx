@@ -3,6 +3,7 @@ import { useResume } from '../context/ResumeContext';
 import { SAMPLE_RESUMES } from '../data/sampleResumes';
 import { TEMPLATES } from '../data/templates';
 import { exportResumeToPDF } from '../utils/exportUtils';
+import { PageBanner } from './PageBanner';
 import {
   FileText,
   Plus,
@@ -72,41 +73,46 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* HEADER & QUICK ACTIONS */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">Career Dashboard</h1>
-            <p className="text-sm text-slate-600">
-              Manage your resumes, track ATS compatibility scores, and tailor applications for top jobs.
-            </p>
-          </div>
+        {/* HERO BANNER IMAGE & QUICK ACTIONS */}
+        <PageBanner
+          badgeText="Executive Career Control Center"
+          badgeIcon={<Sparkles className="w-3.5 h-3.5 text-blue-400" />}
+          title="My Resumes & Career Hub"
+          subtitle="Manage multiple tailored resume versions, track ATS compliance scores, and export recruiter-ready documents."
+          imageVariant="workspace"
+          stats={[
+            { label: 'Active Resumes', value: `${resumes.length}`, icon: <FileText className="w-3.5 h-3.5 text-blue-400" /> },
+            { label: 'Average ATS Score', value: `${avgATS}%`, icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> },
+            { label: 'AI Credits', value: `${aiCredits}`, icon: <Zap className="w-3.5 h-3.5 text-amber-400" /> },
+          ]}
+          actions={
+            <>
+              <button
+                onClick={onOpenNewResumeModal}
+                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Create New Resume</span>
+              </button>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              onClick={onOpenUploadResume}
-              className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
-            >
-              <Upload className="w-4 h-4 text-blue-600" />
-              <span>Upload Resume</span>
-            </button>
+              <button
+                onClick={onOpenUploadResume}
+                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md"
+              >
+                <Upload className="w-4 h-4 text-blue-300" />
+                <span>Upload Resume</span>
+              </button>
 
-            <button
-              onClick={() => setCompareModalOpen(true)}
-              className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
-            >
-              <Columns className="w-4 h-4 text-slate-500" />
-              <span>Compare Versions</span>
-            </button>
-
-            <button
-              onClick={onOpenNewResumeModal}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Create New Resume</span>
-            </button>
-          </div>
-        </div>
+              <button
+                onClick={() => setCompareModalOpen(true)}
+                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md"
+              >
+                <Columns className="w-4 h-4 text-slate-300" />
+                <span>Compare Versions</span>
+              </button>
+            </>
+          }
+        />
 
         {/* USER PROFILE & LINKEDIN ACCOUNT STATUS BANNER */}
         {user ? (

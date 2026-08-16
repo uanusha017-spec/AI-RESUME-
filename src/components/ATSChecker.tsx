@@ -6,6 +6,7 @@ import {
   fetchParseUploadedResume,
 } from '../services/apiClient';
 import { ATSAnalysisResult } from '../types/resume';
+import { PageBanner } from './PageBanner';
 import {
   Target,
   CheckCircle2,
@@ -154,31 +155,28 @@ ${currentResume.education.map((edu) => `${edu.degree} in ${edu.fieldOfStudy} - $
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold mb-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>ATS Compliance Audit & Job Matcher</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-              ATS Score & Keyword Optimizer
-            </h1>
-            <p className="text-sm text-slate-600">
-              Audit your resume against Taleo, Workday, and Greenhouse standards or match against any job posting.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="ATS Compliance Audit & 1-Click Matcher"
+          badgeIcon={<ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />}
+          title="ATS Score & Keyword Optimizer"
+          subtitle="Audit your resume against Taleo, Workday, and Greenhouse standards or match against any job opening to uncover missing hard skills."
+          imageVariant="workspace"
+          stats={[
+            { label: 'Greenhouse Score Target', value: '85%+', icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> },
+            { label: 'Keyword Match Rate', value: '95%+', icon: <Target className="w-3.5 h-3.5 text-blue-400" /> },
+            { label: 'Parsing Reliability', value: '100%', icon: <Zap className="w-3.5 h-3.5 text-amber-400" /> },
+          ]}
+          actions={
             <button
               onClick={onNavigateToBuilder}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm cursor-pointer"
+              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-md cursor-pointer"
             >
               <FileText className="w-4 h-4" />
               <span>Open in Resume Builder</span>
             </button>
-          </div>
-        </div>
+          }
+        />
 
         {/* TABS SELECTOR */}
         <div className="flex items-center gap-2 border-b border-slate-200">

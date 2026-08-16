@@ -1,5 +1,6 @@
 import React from 'react';
 import { BookOpen, CheckCircle2, Target, Zap, Shield, Sparkles } from 'lucide-react';
+import { PageBanner } from './PageBanner';
 
 export const GuidesTips: React.FC = () => {
   const guides = [
@@ -40,19 +41,15 @@ export const GuidesTips: React.FC = () => {
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="border-b border-slate-200 pb-6 space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold mb-2">
-            <BookOpen className="w-3.5 h-3.5 text-blue-600" />
-            <span>Career Strategy & ATS Playbook</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-            Guides & Proven Playbooks
-          </h1>
-          <p className="text-sm text-slate-600">
-            Actionable guides from recruiters and hiring managers at Google, Meta, and Stripe.
-          </p>
-        </div>
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="Career Strategy & ATS Playbook"
+          badgeIcon={<BookOpen className="w-3.5 h-3.5 text-blue-400" />}
+          title="Guides & Proven Career Playbooks"
+          subtitle="Actionable, tested guides and formulas from recruiters and hiring managers at Google, Meta, and Stripe."
+          imageVariant="hero"
+          compact={true}
+        />
 
         {/* GUIDES LIST */}
         <div className="space-y-6">

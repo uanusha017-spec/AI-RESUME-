@@ -3,6 +3,7 @@ import { useResume } from '../context/ResumeContext';
 import { fetchAICoverLetter } from '../services/apiClient';
 import { CoverLetterData } from '../types/resume';
 import { exportCoverLetterToDOCX } from '../utils/exportUtils';
+import { PageBanner } from './PageBanner';
 import {
   FileText,
   Sparkles,
@@ -132,33 +133,33 @@ export const CoverLetterBuilder: React.FC = () => {
     <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">AI Cover Letter Writer</h1>
-            <p className="text-sm text-slate-600">
-              Generate compelling, tailored cover letters matching your resume and target company.
-            </p>
-          </div>
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="AI-Tailored Executive Pitch"
+          badgeIcon={<Mail className="w-3.5 h-3.5 text-blue-400" />}
+          title="AI Cover Letter Writer"
+          subtitle="Generate compelling, bespoke cover letters matching your resume experience with each employer's specific mission."
+          imageVariant="workspace"
+          actions={
+            <>
+              <button
+                onClick={handleCreateNew}
+                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Letter Draft</span>
+              </button>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleCreateNew}
-              className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
-            >
-              <Plus className="w-4 h-4" />
-              <span>New Letter</span>
-            </button>
-
-            <button
-              onClick={handleDownloadDOCX}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>Download Word</span>
-            </button>
-          </div>
-        </div>
+              <button
+                onClick={handleDownloadDOCX}
+                className="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs sm:text-sm font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-md"
+              >
+                <Download className="w-4 h-4 text-blue-300" />
+                <span>Download Word (.DOCX)</span>
+              </button>
+            </>
+          }
+        />
 
         {/* WORKSPACE GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

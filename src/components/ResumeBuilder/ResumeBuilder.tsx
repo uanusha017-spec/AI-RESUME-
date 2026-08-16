@@ -38,6 +38,7 @@ import {
 import { exportResumeToPDF, exportResumeToDOCX } from '../../utils/exportUtils';
 import confetti from 'canvas-confetti';
 import { Upload } from 'lucide-react';
+import workspaceBannerImg from '../../assets/images/workspace_banner_1786886207884.jpg';
 
 interface ResumeBuilderProps {
   onOpenATS: () => void;
@@ -272,6 +273,41 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
         {/* ================= LEFT SIDE: FORM EDITOR (5 COLS) ================= */}
         <div className={`lg:col-span-6 xl:col-span-5 bg-white border-r border-slate-200 p-4 sm:p-6 overflow-y-auto max-h-[calc(100vh-120px)] ${mobileTab === 'preview' ? 'hidden lg:block' : 'block'}`}>
           
+          {/* BUILDER PAGE BANNER */}
+          <div className="relative overflow-hidden rounded-2xl bg-slate-950 text-white p-4 sm:p-5 mb-5 border border-slate-800 shadow-md">
+            <div className="absolute inset-0 z-0">
+              <img
+                src={workspaceBannerImg}
+                alt="Resume Studio"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-center opacity-25"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-blue-950/80" />
+            </div>
+            <div className="relative z-10 flex items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[11px] font-bold">
+                  <Sparkles className="w-3 h-3 text-blue-400" />
+                  <span>Interactive AI Studio</span>
+                </div>
+                <h2 className="text-base sm:text-lg font-black text-white">
+                  {currentResume.title || 'Untitled Resume'}
+                </h2>
+                <p className="text-xs text-slate-300">
+                  Template: <span className="text-blue-300 font-semibold">{currentResume.styling.template}</span> • ATS Ready
+                </p>
+              </div>
+
+              <button
+                onClick={onOpenATS}
+                className="shrink-0 px-3 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/30 text-emerald-300 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer backdrop-blur-sm"
+              >
+                <Target className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Score: {currentResume.atsScore || 92}%</span>
+              </button>
+            </div>
+          </div>
+
           {/* Section Navigation Tabs (Horizontal Scroll) */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-6 border-b border-slate-200 scrollbar-none">
             {sections.map((sec) => {

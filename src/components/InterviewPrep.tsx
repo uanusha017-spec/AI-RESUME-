@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { fetchInterviewPrep } from '../services/apiClient';
 import { InterviewQuestion } from '../types/resume';
+import { PageBanner } from './PageBanner';
 import {
   Sparkles,
   Bot,
@@ -56,19 +57,18 @@ export const InterviewPrep: React.FC = () => {
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="border-b border-slate-200 pb-6 space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-bold mb-2">
-            <Bot className="w-3.5 h-3.5 text-indigo-600" />
-            <span>AI Mock Interview Simulator</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-            Interview Question Generator & STAR Coach
-          </h1>
-          <p className="text-sm text-slate-600">
-            Practice realistic Behavioral, Technical, Situational, and Resume-specific questions tailored to your experience.
-          </p>
-        </div>
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="STAR Method & Mock Simulator"
+          badgeIcon={<Bot className="w-3.5 h-3.5 text-indigo-400" />}
+          title="Interview Prep & STAR Method Coach"
+          subtitle="Practice behavioral, system design, leadership, and resume-specific questions with instant feedback calibrated to hiring standards."
+          imageVariant="hero"
+          stats={[
+            { label: 'Role Context', value: roleInput || 'Engineering', icon: <Sparkles className="w-3.5 h-3.5 text-blue-400" /> },
+            { label: 'Evaluation Model', value: 'STAR Metric', icon: <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> },
+          ]}
+        />
 
         {/* INPUTS */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">

@@ -22,6 +22,7 @@ import {
   Search
 } from 'lucide-react';
 import { ResumeRenderer } from './ResumeTemplates/ResumeRenderer';
+import heroBannerImg from '../assets/images/hero_career_banner_1786886172807.jpg';
 
 interface LandingPageProps {
   onStartBuilding: () => void;
@@ -641,22 +642,44 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* BOTTOM CTA BANNER */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-center">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight">
+      {/* BOTTOM HERO BANNER IMAGE SECTION */}
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-950 text-white text-center">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={heroBannerImg}
+            alt="Resume builder workstation"
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover object-center opacity-30 scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-blue-950/80" />
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold tracking-wide backdrop-blur-sm">
+            <Sparkles className="w-3.5 h-3.5 text-blue-400 animate-pulse" />
+            <span>Accelerate Your Career Today</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
             Ready to Build a Resume That Gets Noticed?
           </h2>
-          <p className="text-blue-100 text-sm sm:text-base max-w-xl mx-auto">
-            Join thousands of professionals landing jobs at Google, Stripe, Amazon, and top startups.
+          <p className="text-slate-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            Join thousands of professionals landing interviews at Google, Stripe, Amazon, and leading global employers.
           </p>
-          <button
-            onClick={onStartBuilding}
-            className="px-8 py-4 bg-white text-blue-600 hover:bg-blue-50 active:bg-blue-100 font-bold text-base rounded-xl shadow-xl transition-all inline-flex items-center gap-2 cursor-pointer"
-          >
-            <span>Start Building with AI Now</span>
-            <ArrowRight className="w-5 h-5" />
-          </button>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={onStartBuilding}
+              className="w-full sm:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold text-base rounded-xl shadow-xl hover:shadow-blue-600/30 transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Start Building with AI Now</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <button
+              onClick={onOpenATS}
+              className="w-full sm:w-auto px-6 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-base rounded-xl backdrop-blur-md transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Target className="w-5 h-5 text-blue-400" />
+              <span>Free ATS Audit</span>
+            </button>
+          </div>
         </div>
       </section>
 

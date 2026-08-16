@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { fetchLinkedInOptimize } from '../services/apiClient';
 import { LinkedInOptimization } from '../types/resume';
+import { PageBanner } from './PageBanner';
 import {
   Linkedin,
   Sparkles,
@@ -46,30 +47,24 @@ export const LinkedInOptimizer: React.FC = () => {
     <div className="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-8">
         
-        {/* HEADER */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold mb-2">
-              <Linkedin className="w-3.5 h-3.5 text-blue-600" />
-              <span>LinkedIn Profile AI Sync</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
-              LinkedIn Optimizer & Headline Generator
-            </h1>
-            <p className="text-sm text-slate-600">
-              Transform your resume experience into high-conversion LinkedIn headlines, an engaging About section, and recruiter keywords.
-            </p>
-          </div>
-
-          <button
-            onClick={handleOptimize}
-            disabled={loading}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-md disabled:opacity-50 cursor-pointer"
-          >
-            {loading ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            <span>Optimize Profile with AI (1 Credit)</span>
-          </button>
-        </div>
+        {/* HERO BANNER */}
+        <PageBanner
+          badgeText="Social Proof & Executive Presence"
+          badgeIcon={<Linkedin className="w-3.5 h-3.5 text-blue-400" />}
+          title="LinkedIn Optimizer & Headline Generator"
+          subtitle="Transform your resume experience into high-conversion LinkedIn headlines, an engaging story-driven About section, and recruiter SEO keywords."
+          imageVariant="workspace"
+          actions={
+            <button
+              onClick={handleOptimize}
+              disabled={loading}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
+            >
+              {loading ? <Sparkles className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              <span>Optimize Profile with AI (1 Credit)</span>
+            </button>
+          }
+        />
 
         {/* RESULTS */}
         {result ? (
