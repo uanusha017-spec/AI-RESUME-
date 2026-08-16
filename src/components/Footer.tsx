@@ -166,7 +166,7 @@ export const Footer: React.FC = () => {
 
       <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
         <p>© {new Date().getFullYear()} ResumeAI Pro. All rights reserved.</p>
-        <p>Built with Google Gemini 2.5 Flash for high-speed, truthful AI assistance.</p>
+        <p>Built with hksurya</p>
       </div>
     </footer>
   );
