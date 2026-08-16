@@ -103,7 +103,7 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true, classN
               PRO
             </span>
           </div>
-          <span className="text-[10px] font-semibold text-slate-500 tracking-wider uppercase mt-0.5">
+          <span className="hidden sm:block text-[10px] font-semibold text-slate-500 tracking-wider uppercase mt-0.5">
             AI Resume Builder
           </span>
         </div>
