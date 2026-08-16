@@ -130,8 +130,8 @@ export const CoverLetterBuilder: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-100 py-6 sm:py-10 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         
         {/* HERO BANNER */}
         <PageBanner
@@ -295,7 +295,7 @@ export const CoverLetterBuilder: React.FC = () => {
 
           {/* RIGHT: LIVE LETTER DOCUMENT VIEWER (7 COLS) */}
           <div className="lg:col-span-7">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-8 sm:p-12 space-y-6 min-h-[700px] text-slate-800 font-serif leading-relaxed text-sm">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl p-4 sm:p-8 lg:p-12 space-y-6 min-h-[500px] sm:min-h-[700px] text-slate-800 font-serif leading-relaxed text-sm">
               
               {/* Header Letterhead */}
               <div className="border-b border-slate-200 pb-5 space-y-1 font-sans">

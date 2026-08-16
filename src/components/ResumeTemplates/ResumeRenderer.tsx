@@ -112,41 +112,41 @@ export const ResumeRenderer: React.FC<ResumeRendererProps> = ({
 
   // Contacts block
   const ContactRow = ({ compact = false }: { compact?: boolean }) => (
-    <div className={`flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600 ${compact ? 'flex-col sm:flex-row' : ''}`}>
+    <div className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs text-slate-600 max-w-full ${compact ? 'flex-col sm:flex-row' : ''}`}>
       {personalInfo.email && (
-        <a href={`mailto:${personalInfo.email}`} className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+        <a href={`mailto:${personalInfo.email}`} className="flex items-center gap-1 hover:text-blue-600 transition-colors break-all max-w-full">
           <Mail className="w-3.5 h-3.5 shrink-0 opacity-70" />
-          <span>{personalInfo.email}</span>
+          <span className="break-all">{personalInfo.email}</span>
         </a>
       )}
       {personalInfo.phone && (
-        <a href={`tel:${personalInfo.phone}`} className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+        <a href={`tel:${personalInfo.phone}`} className="flex items-center gap-1 hover:text-blue-600 transition-colors shrink-0">
           <Phone className="w-3.5 h-3.5 shrink-0 opacity-70" />
           <span>{personalInfo.phone}</span>
         </a>
       )}
       {personalInfo.location && (
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <MapPin className="w-3.5 h-3.5 shrink-0 opacity-70" />
           <span>{personalInfo.location}</span>
         </div>
       )}
       {personalInfo.linkedin && (
-        <a href={`https://${personalInfo.linkedin.replace(/^https?:\/\//, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+        <a href={`https://${personalInfo.linkedin.replace(/^https?:\/\//, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors break-all max-w-full">
           <Linkedin className="w-3.5 h-3.5 shrink-0 opacity-70" />
-          <span>{personalInfo.linkedin.replace(/^https?:\/\/(www\.)?/, '')}</span>
+          <span className="break-all">{personalInfo.linkedin.replace(/^https?:\/\/(www\.)?/, '')}</span>
         </a>
       )}
       {personalInfo.github && (
-        <a href={`https://${personalInfo.github.replace(/^https?:\/\//, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+        <a href={`https://${personalInfo.github.replace(/^https?:\/\//, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors break-all max-w-full">
           <Github className="w-3.5 h-3.5 shrink-0 opacity-70" />
-          <span>{personalInfo.github.replace(/^https?:\/\/(www\.)?/, '')}</span>
+          <span className="break-all">{personalInfo.github.replace(/^https?:\/\/(www\.)?/, '')}</span>
         </a>
       )}
       {personalInfo.website && (
-        <a href={`https://${personalInfo.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors">
+        <a href={`https://${personalInfo.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-blue-600 transition-colors break-all max-w-full">
           <Globe className="w-3.5 h-3.5 shrink-0 opacity-70" />
-          <span>{personalInfo.website.replace(/^https?:\/\/(www\.)?/, '')}</span>
+          <span className="break-all">{personalInfo.website.replace(/^https?:\/\/(www\.)?/, '')}</span>
         </a>
       )}
     </div>
@@ -406,12 +406,12 @@ export const ResumeRenderer: React.FC<ResumeRendererProps> = ({
       <div
         id="resume-document"
         className={`bg-white text-slate-800 shadow-xl transition-all ${fontClass} ${fontSizeClass} ${
-          isPrint ? 'shadow-none w-full' : 'max-w-[850px] mx-auto min-h-[1100px]'
+          isPrint ? 'shadow-none w-full' : 'w-full max-w-[850px] mx-auto min-h-[1100px]'
         }`}
         style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
       >
         {/* Top Header Card */}
-        <div className="p-8 sm:p-10 border-b border-slate-200" style={{ backgroundColor: template === 'designer-split' ? '#0F172A' : '#F8FAFC' }}>
+        <div className="p-5 sm:p-8 md:p-10 border-b border-slate-200" style={{ backgroundColor: template === 'designer-split' ? '#0F172A' : '#F8FAFC' }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${template === 'designer-split' ? 'text-white' : 'text-slate-900'}`}>
@@ -428,7 +428,7 @@ export const ResumeRenderer: React.FC<ResumeRendererProps> = ({
         </div>
 
         {/* 2-Column Body */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 p-8 sm:p-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 p-5 sm:p-8 md:p-10">
           {/* Main Col (7/12) */}
           <div className="md:col-span-8 space-y-6">
             {summary && (
@@ -461,7 +461,7 @@ export const ResumeRenderer: React.FC<ResumeRendererProps> = ({
       <div
         id="resume-document"
         className={`bg-white text-slate-800 shadow-xl transition-all ${fontClass} ${fontSizeClass} ${marginClass} ${
-          isPrint ? 'shadow-none w-full' : 'max-w-[850px] mx-auto min-h-[1100px]'
+          isPrint ? 'shadow-none w-full' : 'w-full max-w-[850px] mx-auto min-h-[1100px]'
         }`}
         style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
       >
@@ -508,7 +508,7 @@ export const ResumeRenderer: React.FC<ResumeRendererProps> = ({
     <div
       id="resume-document"
       className={`bg-white text-slate-800 shadow-xl transition-all ${fontClass} ${fontSizeClass} ${marginClass} ${
-        isPrint ? 'shadow-none w-full' : 'max-w-[850px] mx-auto min-h-[1100px]'
+        isPrint ? 'shadow-none w-full' : 'w-full max-w-[850px] mx-auto min-h-[1100px]'
       }`}
       style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
     >

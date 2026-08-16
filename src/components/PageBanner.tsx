@@ -32,7 +32,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
 
   return (
     <div className={`relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-800 bg-slate-950 text-white shadow-xl ${
-      compact ? 'p-6 sm:p-8' : 'p-6 sm:p-10 lg:p-12'
+      compact ? 'p-4 sm:p-6 md:p-8' : 'p-4 sm:p-8 lg:p-12'
     }`}>
       {/* Background Banner Image with Dark Multi-Gradient Overlay for Perfect Legibility */}
       <div className="absolute inset-0 z-0">
@@ -47,36 +47,36 @@ export const PageBanner: React.FC<PageBannerProps> = ({
       </div>
 
       {/* Foreground Content */}
-      <div className="relative z-10 max-w-4xl space-y-4">
+      <div className="relative z-10 max-w-4xl space-y-3 sm:space-y-4">
         {badgeText && (
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold tracking-wide backdrop-blur-sm">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-[11px] sm:text-xs font-bold tracking-wide backdrop-blur-sm max-w-full truncate">
             {badgeIcon}
-            <span>{badgeText}</span>
+            <span className="truncate">{badgeText}</span>
           </div>
         )}
 
-        <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
+        <div className="space-y-1.5 sm:space-y-2">
+          <h1 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
             {title}
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-slate-300 max-w-2xl leading-relaxed">
             {subtitle}
           </p>
         </div>
 
         {/* Optional Stats or Highlights */}
         {stats && stats.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 max-w-xl">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 pt-1 max-w-xl">
             {stats.map((stat, i) => (
               <div
                 key={i}
-                className="px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/10 backdrop-blur-md"
+                className="px-2.5 py-2 sm:px-3.5 sm:py-2.5 rounded-xl bg-white/10 border border-white/10 backdrop-blur-md"
               >
-                <div className="text-xs text-slate-300 flex items-center gap-1.5 font-medium">
+                <div className="text-[11px] sm:text-xs text-slate-300 flex items-center gap-1 sm:gap-1.5 font-medium truncate">
                   {stat.icon}
-                  <span>{stat.label}</span>
+                  <span className="truncate">{stat.label}</span>
                 </div>
-                <div className="text-base sm:text-lg font-black text-white font-mono mt-0.5">
+                <div className="text-sm sm:text-base md:text-lg font-black text-white font-mono mt-0.5">
                   {stat.value}
                 </div>
               </div>
@@ -86,7 +86,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
 
         {/* Actions CTA */}
         {actions && (
-          <div className="pt-2 flex flex-wrap items-center gap-3">
+          <div className="pt-2 flex flex-wrap items-center gap-2 sm:gap-3">
             {actions}
           </div>
         )}

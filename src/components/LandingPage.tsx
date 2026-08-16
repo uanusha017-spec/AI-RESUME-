@@ -189,7 +189,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
               {/* Floating ATS Badge */}
-              <div className="absolute -top-4 -left-4 sm:-top-6 sm:-left-6 z-20 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-100 p-3.5 flex items-center gap-3 animate-in fade-in slide-in-from-left-4">
+              <div className="hidden sm:flex absolute -top-4 -left-4 sm:-top-6 sm:-left-6 z-20 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-emerald-100 p-3.5 items-center gap-3 animate-in fade-in slide-in-from-left-4">
                 <div className="w-11 h-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black text-lg shadow-md">
                   96
                 </div>
@@ -203,7 +203,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
 
               {/* Floating AI Improvement Badge */}
-              <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 z-20 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-blue-100 p-3.5 flex items-center gap-3">
+              <div className="hidden sm:flex absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 z-20 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-blue-100 p-3.5 items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center">
                   <Sparkles className="w-5 h-5" />
                 </div>
@@ -231,8 +231,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
 
               {/* Scaled Preview Frame */}
-              <div className="rounded-2xl border border-slate-200 shadow-2xl bg-white overflow-hidden max-h-[520px] overflow-y-auto p-4 sm:p-6 transition-all">
-                <ResumeRenderer resume={selectedDemoResume} scale={0.9} previewMode={true} />
+              <div className="rounded-2xl border border-slate-200 shadow-2xl bg-white overflow-hidden max-h-[520px] overflow-y-auto p-3 sm:p-6 transition-all flex justify-center">
+                <div className="w-full flex justify-center overflow-x-auto scrollbar-none">
+                  <ResumeRenderer resume={selectedDemoResume} scale={1} previewMode={true} />
+                </div>
               </div>
             </div>
           </div>

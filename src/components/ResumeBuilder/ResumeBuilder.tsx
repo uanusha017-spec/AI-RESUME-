@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useResume } from '../../context/ResumeContext';
 import { TEMPLATES, FONT_OPTIONS, COLOR_PALETTES } from '../../data/templates';
 import { ResumeRenderer } from '../ResumeTemplates/ResumeRenderer';
@@ -68,8 +68,26 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
   const [activeSection, setActiveSection] = useState<string>('personal');
   // Mobile preview toggle
   const [mobileTab, setMobileTab] = useState<'edit' | 'preview'>('edit');
-  // Zoom scale
-  const [zoomScale, setZoomScale] = useState<number>(0.9);
+  // Zoom scale & mode
+  const [zoomMode, setZoomMode] = useState<'fit' | '75' | '100'>('fit');
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const currentScale = useMemo(() => {
+    if (zoomMode === '100') return 1.0;
+    if (zoomMode === '75') return 0.75;
+    // 'fit' mode
+    if (windowWidth < 1024) {
+      return Math.min(1.0, Math.max(0.35, (windowWidth - 28) / 850));
+    }
+    return 0.9;
+  }, [zoomMode, windowWidth]);
+
   // AI Generator modal state
   const [aiModalType, setAiModalType] = useState<'summary' | 'bullets' | 'improve' | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -177,89 +195,89 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
     <div className="min-h-screen bg-slate-100 flex flex-col">
       
       {/* BUILDER SUB-HEADER / TOOLBAR */}
-      <div className="bg-white border-b border-slate-200 sticky top-16 z-30 px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+      <div className="bg-white border-b border-slate-200 sticky top-14 sm:top-16 z-30 px-3 sm:px-6 py-2 sm:py-2.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sm:gap-4 shadow-xs">
         
         {/* Left: Title & Undo/Redo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 flex-1 sm:flex-initial">
           <input
             type="text"
             value={currentResume.title}
             onChange={(e) => updateCurrentResume({ title: e.target.value })}
-            className="font-bold text-sm sm:text-base text-slate-900 bg-transparent hover:bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 rounded px-2 py-1 max-w-[200px] sm:max-w-xs border border-transparent hover:border-slate-200"
+            className="font-bold text-xs sm:text-base text-slate-900 bg-transparent hover:bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 rounded px-1.5 sm:px-2 py-1 max-w-[140px] sm:max-w-xs border border-transparent hover:border-slate-200 truncate"
             title="Click to rename resume title"
           />
 
-          <div className="hidden sm:flex items-center gap-1 border-l border-slate-200 pl-3">
+          <div className="flex items-center gap-0.5 border-l border-slate-200 pl-1.5 sm:pl-3 shrink-0">
             <button
               onClick={undo}
               disabled={!canUndo}
-              className={`p-1.5 rounded hover:bg-slate-100 transition-colors ${canUndo ? 'text-slate-700 cursor-pointer' : 'text-slate-300 cursor-not-allowed'}`}
+              className={`p-1 sm:p-1.5 rounded hover:bg-slate-100 transition-colors ${canUndo ? 'text-slate-700 cursor-pointer' : 'text-slate-300 cursor-not-allowed'}`}
               title="Undo (Ctrl+Z)"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={redo}
               disabled={!canRedo}
-              className={`p-1.5 rounded hover:bg-slate-100 transition-colors ${canRedo ? 'text-slate-700 cursor-pointer' : 'text-slate-300 cursor-not-allowed'}`}
+              className={`p-1 sm:p-1.5 rounded hover:bg-slate-100 transition-colors ${canRedo ? 'text-slate-700 cursor-pointer' : 'text-slate-300 cursor-not-allowed'}`}
               title="Redo (Ctrl+Y)"
             >
-              <RotateCw className="w-4 h-4" />
+              <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           </div>
         </div>
 
         {/* Center: Mobile Tabs Switcher */}
-        <div className="flex lg:hidden bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold">
+        <div className="flex lg:hidden bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs font-semibold shrink-0">
           <button
             onClick={() => setMobileTab('edit')}
-            className={`px-3 py-1.5 rounded-md transition-all ${mobileTab === 'edit' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600'}`}
+            className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md transition-all ${mobileTab === 'edit' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'}`}
           >
-            <Edit3 className="w-3.5 h-3.5 inline mr-1" /> Edit
+            <Edit3 className="w-3.5 h-3.5 inline mr-1" /> Form
           </button>
           <button
             onClick={() => setMobileTab('preview')}
-            className={`px-3 py-1.5 rounded-md transition-all ${mobileTab === 'preview' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-600'}`}
+            className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-md transition-all ${mobileTab === 'preview' ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600'}`}
           >
             <Eye className="w-3.5 h-3.5 inline mr-1" /> Preview
           </button>
         </div>
 
         {/* Right: ATS Score & Download Actions */}
-        <div className="flex items-center gap-2">
-          {/* Upload / Replace Resume */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Upload / Replace Resume (Desktop only) */}
           {onOpenUploadResume && (
             <button
               onClick={onOpenUploadResume}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+              className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
               title="Import or upload resume to replace"
             >
               <Upload className="w-3.5 h-3.5 text-blue-600" />
-              <span>Import Resume</span>
+              <span>Import</span>
             </button>
           )}
 
           {/* Quick ATS Button */}
           <button
             onClick={onOpenATS}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold hover:bg-emerald-100 transition-colors cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] sm:text-xs font-bold hover:bg-emerald-100 transition-colors cursor-pointer shrink-0"
           >
-            <Target className="w-3.5 h-3.5 text-emerald-600" />
-            <span>ATS: {currentResume.atsScore || 92}/100</span>
+            <Target className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>ATS: {currentResume.atsScore || 92}</span>
           </button>
 
           {/* Export Dropdown / Actions */}
           <button
             onClick={handleExportPDF}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-sm transition-all cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 sm:px-3.5 sm:py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-xs transition-all cursor-pointer shrink-0"
           >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">PDF</span>
+            <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span>PDF</span>
           </button>
 
           <button
             onClick={handleExportDOCX}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium rounded-lg shadow-sm transition-all cursor-pointer"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium rounded-lg shadow-xs transition-all cursor-pointer shrink-0"
           >
             <span>Word</span>
           </button>
@@ -1337,34 +1355,50 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({
         </div>
 
         {/* ================= RIGHT SIDE: LIVE PREVIEW (7 COLS) ================= */}
-        <div className={`lg:col-span-6 xl:col-span-7 bg-slate-200/70 p-4 sm:p-8 overflow-y-auto max-h-[calc(100vh-120px)] flex flex-col items-center ${mobileTab === 'edit' ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`lg:col-span-6 xl:col-span-7 bg-slate-200/70 p-2 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-120px)] flex flex-col items-center ${mobileTab === 'edit' ? 'hidden lg:flex' : 'flex'}`}>
           
           {/* Zoom controls floating bar */}
-          <div className="mb-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-full shadow-md border border-slate-200 flex items-center gap-3 text-xs font-semibold text-slate-700">
-            <span className="text-slate-500">Zoom:</span>
+          <div className="mb-3 sm:mb-4 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full shadow-md border border-slate-200 flex items-center gap-2 sm:gap-3 text-xs font-semibold text-slate-700">
+            <span className="text-slate-500 text-[11px] sm:text-xs">Zoom:</span>
             <button
-              onClick={() => setZoomScale(0.75)}
-              className={`px-2 py-0.5 rounded ${zoomScale === 0.75 ? 'bg-blue-600 text-white' : 'hover:bg-slate-100'}`}
+              onClick={() => setZoomMode('fit')}
+              className={`px-2.5 py-0.5 rounded-full transition-colors ${zoomMode === 'fit' ? 'bg-blue-600 text-white shadow-xs' : 'hover:bg-slate-100 text-slate-700'}`}
+            >
+              Fit
+            </button>
+            <button
+              onClick={() => setZoomMode('75')}
+              className={`px-2 py-0.5 rounded-full transition-colors ${zoomMode === '75' ? 'bg-blue-600 text-white shadow-xs' : 'hover:bg-slate-100 text-slate-700'}`}
             >
               75%
             </button>
             <button
-              onClick={() => setZoomScale(0.9)}
-              className={`px-2 py-0.5 rounded ${zoomScale === 0.9 ? 'bg-blue-600 text-white' : 'hover:bg-slate-100'}`}
-            >
-              90%
-            </button>
-            <button
-              onClick={() => setZoomScale(1.0)}
-              className={`px-2 py-0.5 rounded ${zoomScale === 1.0 ? 'bg-blue-600 text-white' : 'hover:bg-slate-100'}`}
+              onClick={() => setZoomMode('100')}
+              className={`px-2 py-0.5 rounded-full transition-colors ${zoomMode === '100' ? 'bg-blue-600 text-white shadow-xs' : 'hover:bg-slate-100 text-slate-700'}`}
             >
               100%
             </button>
           </div>
 
           {/* Actual Document Render Container */}
-          <div className="w-full transition-transform">
-            <ResumeRenderer resume={currentResume} scale={zoomScale} previewMode={false} />
+          <div className="w-full flex justify-center overflow-x-auto pb-8 scrollbar-none">
+            <div
+              className="origin-top transition-transform shrink-0"
+              style={{
+                width: `${850 * currentScale}px`,
+                minWidth: `${850 * currentScale}px`,
+              }}
+            >
+              <div
+                style={{
+                  width: '850px',
+                  transform: `scale(${currentScale})`,
+                  transformOrigin: 'top left',
+                }}
+              >
+                <ResumeRenderer resume={currentResume} scale={1} previewMode={false} />
+              </div>
+            </div>
           </div>
         </div>
 

@@ -69,7 +69,7 @@ const AppContent: React.FC = () => {
   };
 
   const appCoreContent = (
-    <div className={`min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white ${
+    <div className={`min-h-screen min-h-[100dvh] bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white ${
       isMobileFrame ? 'max-w-[430px] mx-auto rounded-[44px] shadow-2xl border-[10px] border-slate-900 overflow-hidden relative my-6 min-h-[880px]' : ''
     }`}>
       {/* Mobile Simulated Status Bar */}
@@ -87,7 +87,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main View Router */}
-      <main className="flex-1 pb-20 lg:pb-0">
+      <main className="flex-1 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] lg:pb-0">
         {activeTab === 'landing' && (
           <LandingPage
             onStartBuilding={() => setActiveTab('builder')}

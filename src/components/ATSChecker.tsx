@@ -179,41 +179,41 @@ ${currentResume.education.map((edu) => `${edu.degree} in ${edu.fieldOfStudy} - $
         />
 
         {/* TABS SELECTOR */}
-        <div className="flex items-center gap-2 border-b border-slate-200">
+        <div className="flex items-center gap-1 sm:gap-2 border-b border-slate-200 overflow-x-auto scrollbar-none pb-px whitespace-nowrap">
           <button
             onClick={() => setActiveTab('analyzer')}
-            className={`px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'analyzer'
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
-            <Target className="w-4 h-4 inline mr-1.5" />
+            <Target className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1" />
             1. ATS Score Audit
           </button>
 
           <button
             onClick={() => setActiveTab('job-matcher')}
-            className={`px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'job-matcher'
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
-            <Zap className="w-4 h-4 inline mr-1.5" />
-            2. Match to Job Description
+            <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1" />
+            2. Match to Job
           </button>
 
           <button
             onClick={() => setActiveTab('upload-parser')}
-            className={`px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'upload-parser'
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
-            <UploadCloud className="w-4 h-4 inline mr-1.5" />
-            3. Upload & Extract Existing Resume
+            <UploadCloud className="w-3.5 h-3.5 sm:w-4 sm:h-4 inline mr-1" />
+            3. Upload & Extract
           </button>
         </div>
 
