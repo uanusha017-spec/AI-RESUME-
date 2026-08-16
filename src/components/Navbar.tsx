@@ -18,14 +18,20 @@ import {
   Briefcase,
   Layers,
   Mail,
-  Compass
+  Compass,
+  Smartphone,
+  Download
 } from 'lucide-react';
+import { MobileAppSwitcher } from './MobileAppSwitcher';
 
 interface NavbarProps {
   onOpenAuth: () => void;
   onOpenNewResume: () => void;
   onOpenUploadResume?: () => void;
   onOpenCreditsModal?: () => void;
+  onOpenInstallModal?: () => void;
+  isMobileFrame?: boolean;
+  onToggleMobileFrame?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,6 +39,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenNewResume,
   onOpenUploadResume,
   onOpenCreditsModal,
+  onOpenInstallModal,
+  isMobileFrame = false,
+  onToggleMobileFrame,
 }) => {
   const { activeTab, setActiveTab, user, logout, aiCredits } = useResume();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -129,6 +138,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* ZONE 3: PRIMARY ACTIONS + AUTH + MOBILE/TABLET TOGGLE */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Mobile App Mode Switcher (Desktop preview) */}
+          {onToggleMobileFrame && (
+            <MobileAppSwitcher
+              isMobileFrame={isMobileFrame}
+              onToggleMobileFrame={onToggleMobileFrame}
+              onOpenInstallModal={onOpenInstallModal || (() => {})}
+            />
+          )}
+
           {/* AI Credits Interactive Pill */}
           <button
             onClick={onOpenCreditsModal}
@@ -405,6 +423,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                 );
               })}
             </div>
+          </div>
+
+          {/* Install Mobile App Prompt Card */}
+          <div className="p-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl text-white flex items-center justify-between shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
+                <Smartphone className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <div className="text-xs font-bold">Install Mobile App</div>
+                <div className="text-[10px] text-blue-100">Add to Home Screen (PWA)</div>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                if (onOpenInstallModal) onOpenInstallModal();
+                setMobileMenuOpen(false);
+              }}
+              className="px-3 py-1.5 bg-white text-blue-600 hover:bg-blue-50 active:bg-blue-100 text-xs font-bold rounded-xl cursor-pointer shadow-xs transition-colors"
+            >
+              Install
+            </button>
           </div>
 
           {/* Bottom Info / Home link */}

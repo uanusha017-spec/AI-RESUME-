@@ -18,7 +18,11 @@ import { Modals } from './components/Modals';
 import { UploadResumeModal } from './components/UploadResumeModal';
 import { CreditsModal } from './components/CreditsModal';
 import { PaymentModal } from './components/PaymentModal';
-import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { MobileBottomNav } from './components/MobileBottomNav';
+import { MobileQuickSheet } from './components/MobileQuickSheet';
+import { MobileAppInstallModal } from './components/MobileAppInstallModal';
+import { MobileStatusBar } from './components/MobileStatusBar';
+import { CheckCircle2, AlertCircle, Info, X, Smartphone, Monitor } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const { activeTab, setActiveTab, notifications, removeNotification } = useResume();
@@ -26,6 +30,9 @@ const AppContent: React.FC = () => {
   const [newResumeOpen, setNewResumeOpen] = useState(false);
   const [uploadResumeOpen, setUploadResumeOpen] = useState(false);
   const [creditsModalOpen, setCreditsModalOpen] = useState(false);
+  const [installModalOpen, setInstallModalOpen] = useState(false);
+  const [quickSheetOpen, setQuickSheetOpen] = useState(false);
+  const [isMobileFrame, setIsMobileFrame] = useState(false);
 
   // Payment Gateway Modal State (Number: 9035066863)
   const [paymentModalState, setPaymentModalState] = useState<{
@@ -61,18 +68,26 @@ const AppContent: React.FC = () => {
     });
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white">
+  const appCoreContent = (
+    <div className={`min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-blue-500 selection:text-white ${
+      isMobileFrame ? 'max-w-[430px] mx-auto rounded-[44px] shadow-2xl border-[10px] border-slate-900 overflow-hidden relative my-6 min-h-[880px]' : ''
+    }`}>
+      {/* Mobile Simulated Status Bar */}
+      {isMobileFrame && <MobileStatusBar />}
+
       {/* Navigation Top Bar */}
       <Navbar
         onOpenAuth={() => setActiveTab('login')}
         onOpenNewResume={() => setNewResumeOpen(true)}
         onOpenUploadResume={() => setUploadResumeOpen(true)}
         onOpenCreditsModal={() => setCreditsModalOpen(true)}
+        onOpenInstallModal={() => setInstallModalOpen(true)}
+        isMobileFrame={isMobileFrame}
+        onToggleMobileFrame={() => setIsMobileFrame(!isMobileFrame)}
       />
 
       {/* Main View Router */}
-      <main className="flex-1">
+      <main className="flex-1 pb-20 lg:pb-0">
         {activeTab === 'landing' && (
           <LandingPage
             onStartBuilding={() => setActiveTab('builder')}
@@ -143,7 +158,31 @@ const AppContent: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <Footer />
+      {!isMobileFrame && <Footer />}
+
+      {/* Mobile Native Bottom Navigation Dock */}
+      <div className={isMobileFrame ? 'block sticky bottom-0' : 'block lg:hidden'}>
+        <MobileBottomNav
+          onOpenNewResume={() => setNewResumeOpen(true)}
+          onOpenQuickSheet={() => setQuickSheetOpen(true)}
+          onOpenCreditsModal={() => setCreditsModalOpen(true)}
+        />
+      </div>
+
+      {/* Mobile Quick Action Bottom Sheet */}
+      <MobileQuickSheet
+        isOpen={quickSheetOpen}
+        onClose={() => setQuickSheetOpen(false)}
+        onOpenNewResume={() => setNewResumeOpen(true)}
+        onOpenUploadResume={() => setUploadResumeOpen(true)}
+        onOpenCreditsModal={() => setCreditsModalOpen(true)}
+      />
+
+      {/* Mobile App Install Modal (PWA & Add to Home Screen) */}
+      <MobileAppInstallModal
+        isOpen={installModalOpen}
+        onClose={() => setInstallModalOpen(false)}
+      />
 
       {/* Global Modals */}
       <Modals
@@ -180,7 +219,7 @@ const AppContent: React.FC = () => {
       />
 
       {/* Notification Toast System */}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+      <div className="fixed bottom-20 lg:bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-2 sm:px-0">
         {notifications.map((n) => (
           <div
             key={n.id}
@@ -211,6 +250,29 @@ const AppContent: React.FC = () => {
         ))}
       </div>
     </div>
+  );
+
+  return isMobileFrame ? (
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
+      {/* Mobile Simulator Controls Toolbar */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl px-5 py-2.5 flex items-center justify-between gap-4 max-w-md w-full mb-3 text-white shadow-xl">
+        <div className="flex items-center gap-2 text-xs font-bold">
+          <Smartphone className="w-4 h-4 text-blue-400" />
+          <span>iPhone 16 Pro Mobile App Shell</span>
+        </div>
+        <button
+          onClick={() => setIsMobileFrame(false)}
+          className="flex items-center gap-1.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold cursor-pointer transition-colors"
+        >
+          <Monitor className="w-3.5 h-3.5" />
+          <span>Exit Frame View</span>
+        </button>
+      </div>
+
+      {appCoreContent}
+    </div>
+  ) : (
+    appCoreContent
   );
 };
 
