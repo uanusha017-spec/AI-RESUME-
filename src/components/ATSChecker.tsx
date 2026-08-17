@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useResume } from '../context/ResumeContext';
 import {
   fetchATSScore,
   fetchJobMatch,
   fetchParseUploadedResume,
 } from '../services/apiClient';
+import { extractResumeFileContent } from '../utils/documentExtractor';
 import { ATSAnalysisResult } from '../types/resume';
 import { PageBanner } from './PageBanner';
 import {
@@ -22,12 +23,15 @@ import {
   ArrowRight,
   ShieldCheck,
   Layers,
-  Wand2
+  Wand2,
+  Upload,
+  FileCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const ATSChecker: React.FC<{ onNavigateToBuilder: () => void }> = ({ onNavigateToBuilder }) => {
-  const { currentResume, updateCurrentResume, useCredit, addNotification, createNewResume } = useResume();
+  const { currentResume, updateCurrentResume, useCredit, addNotification, importResume } = useResume();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<'analyzer' | 'job-matcher' | 'upload-parser'>('analyzer');
   const [loading, setLoading] = useState(false);
@@ -40,6 +44,7 @@ export const ATSChecker: React.FC<{ onNavigateToBuilder: () => void }> = ({ onNa
 
   // Upload parser state
   const [pastedRawText, setPastedRawText] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Run ATS audit on active resume
   const handleRunAudit = async () => {
@@ -127,27 +132,38 @@ ${currentResume.education.map((edu) => `${edu.degree} in ${edu.fieldOfStudy} - $
 
   // Parse raw text or uploaded document
   const handleParseText = async () => {
-    if (!pastedRawText.trim()) {
-      addNotification('Please paste resume text to extract', 'warning');
+    let rawTextToParse = pastedRawText.trim();
+
+    if (selectedFile) {
+      setLoading(true);
+      try {
+        const extracted = await extractResumeFileContent(selectedFile);
+        if (extracted.isJson && extracted.jsonData) {
+          importResume(extracted.jsonData, selectedFile.name.replace(/\.[^/.]+$/, ''));
+          setLoading(false);
+          addNotification('Resume content successfully imported!', 'success');
+          onNavigateToBuilder();
+          return;
+        }
+        rawTextToParse = extracted.text;
+      } catch (e) {
+        console.warn('File extraction error in ATS Checker:', e);
+      }
+    }
+
+    if (!rawTextToParse) {
+      addNotification('Please upload a file or paste resume text to extract', 'warning');
       return;
     }
-    setLoading(true);
-    const parsed = await fetchParseUploadedResume(pastedRawText);
 
-    // Create a new resume with parsed fields
-    const created = createNewResume('modern-blue', parsed.personalInfo?.jobTitle || 'Professional');
-    updateCurrentResume({
-      ...created,
-      personalInfo: {
-        ...created.personalInfo,
-        ...(parsed.personalInfo || {}),
-      },
-      summary: parsed.summary || created.summary,
-      skills: parsed.skills && parsed.skills.length > 0 ? parsed.skills : created.skills,
-    });
+    setLoading(true);
+    const parsed = await fetchParseUploadedResume(rawTextToParse);
+    const parsedName = (parsed as any).fullName || parsed.personalInfo?.fullName || 'Imported';
+    const title = selectedFile ? selectedFile.name.replace(/\.[^/.]+$/, '') : `${parsedName} Resume`;
+    importResume(parsed, title);
 
     setLoading(false);
-    addNotification('Resume content successfully parsed & imported!', 'success');
+    addNotification('Resume content successfully parsed & imported into builder!', 'success');
     onNavigateToBuilder();
   };
 
@@ -523,31 +539,73 @@ ${currentResume.education.map((edu) => `${edu.degree} in ${edu.fieldOfStudy} - $
 
         {/* ================= TAB 3: UPLOAD & EXTRACT RESUME ================= */}
         {activeTab === 'upload-parser' && (
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-5 animate-in fade-in duration-200">
             <div>
-              <h3 className="font-bold text-slate-900 text-base">Import Existing Resume</h3>
+              <h3 className="font-bold text-slate-900 text-base">Import Existing Resume Document</h3>
               <p className="text-xs text-slate-500">
-                Paste raw text from your existing PDF, Word, or LinkedIn profile to extract into structured sections automatically.
+                Upload your existing PDF, DOCX (Word), or text resume to extract contact details, experiences, bullets, education, and skills.
               </p>
             </div>
 
-            <textarea
-              rows={8}
-              value={pastedRawText}
-              onChange={(e) => setPastedRawText(e.target.value)}
-              placeholder="Paste entire resume text here (e.g. Name, Experience, Education, Skills)..."
-              className="w-full text-xs sm:text-sm p-3.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 leading-relaxed font-mono"
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept=".pdf,.docx,.doc,.txt,.json,.md"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setSelectedFile(e.target.files[0]);
+                }
+              }}
             />
+
+            {/* File Drop Area */}
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-2 ${
+                selectedFile ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-300 hover:border-blue-500 hover:bg-slate-50'
+              }`}
+            >
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedFile ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-600'}`}>
+                {selectedFile ? <FileCheck className="w-6 h-6" /> : <Upload className="w-6 h-6" />}
+              </div>
+              {selectedFile ? (
+                <div>
+                  <p className="text-sm font-bold text-slate-900">{selectedFile.name}</p>
+                  <p className="text-xs text-emerald-700 font-semibold">{(selectedFile.size / 1024).toFixed(1)} KB • File loaded</p>
+                  <span className="text-[11px] text-blue-600 underline font-medium mt-1 inline-block">Click to replace file</span>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm font-bold text-slate-800">Click to upload resume file (PDF, DOCX, TXT)</p>
+                  <p className="text-xs text-slate-500">Or paste text below</p>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Or Paste Resume Content Directly:
+              </label>
+              <textarea
+                rows={6}
+                value={pastedRawText}
+                onChange={(e) => setPastedRawText(e.target.value)}
+                placeholder="Paste entire resume text here (e.g. Name, Experience, Education, Skills)..."
+                className="w-full text-xs sm:text-sm p-3.5 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 leading-relaxed font-mono"
+              />
+            </div>
 
             <button
               onClick={handleParseText}
-              disabled={loading || !pastedRawText.trim()}
+              disabled={loading || (!pastedRawText.trim() && !selectedFile)}
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 shadow-md disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <>
                   <Sparkles className="w-4 h-4 animate-spin" />
-                  <span>Extracting sections with AI...</span>
+                  <span>Extracting sections & importing...</span>
                 </>
               ) : (
                 <>

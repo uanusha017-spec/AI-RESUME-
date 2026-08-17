@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { fetchParseUploadedResume } from '../services/apiClient';
+import { extractResumeFileContent } from '../utils/documentExtractor';
 import {
   Upload,
   FileText,
@@ -15,7 +16,9 @@ import {
   FileCheck,
   Zap,
   Layers,
-  ChevronRight
+  ChevronRight,
+  Eye,
+  FileSpreadsheet
 } from 'lucide-react';
 
 interface UploadResumeModalProps {
@@ -29,13 +32,15 @@ export const UploadResumeModal: React.FC<UploadResumeModalProps> = ({
   onClose,
   onSuccessNavigate,
 }) => {
-  const { importResume, addNotification, useCredit, addCredit } = useResume();
+  const { importResume, addNotification } = useResume();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [activeMode, setActiveMode] = useState<'upload' | 'paste'>('upload');
   const [dragOver, setDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [extractedRawText, setExtractedRawText] = useState<string>('');
   const [pastedText, setPastedText] = useState('');
+  const [showRawExtractedText, setShowRawExtractedText] = useState(false);
   
   // Parsing status
   const [isParsing, setIsParsing] = useState(false);
@@ -45,52 +50,22 @@ export const UploadResumeModal: React.FC<UploadResumeModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Extract raw text from File
-  const extractTextFromFile = async (file: File): Promise<string> => {
-    // 1. JSON handling
-    if (file.name.endsWith('.json')) {
-      const text = await file.text();
-      return text;
-    }
-
-    // 2. TXT / Markdown
-    if (file.name.endsWith('.txt') || file.name.endsWith('.md')) {
-      return await file.text();
-    }
-
-    // 3. PDF or DOCX binary text extraction fallback
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result;
-        if (typeof result === 'string') {
-          resolve(result);
-        } else if (result instanceof ArrayBuffer) {
-          // Extract printable ASCII strings from buffer
-          const bytes = new Uint8Array(result);
-          let rawStr = '';
-          for (let i = 0; i < bytes.length; i++) {
-            const code = bytes[i];
-            if ((code >= 32 && code <= 126) || code === 10 || code === 13 || code === 9) {
-              rawStr += String.fromCharCode(code);
-            } else if (rawStr.length > 0 && rawStr[rawStr.length - 1] !== ' ') {
-              rawStr += ' ';
-            }
-          }
-          resolve(rawStr.replace(/\s+/g, ' ').substring(0, 8000));
-        } else {
-          resolve('Experienced professional resume content');
-        }
-      };
-      reader.onerror = () => resolve('Experienced professional resume content');
-      reader.readAsText(file);
-    });
-  };
-
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     setErrorMessage(null);
     setParsedPreview(null);
     setSelectedFile(file);
+    setExtractedRawText('');
+
+    try {
+      const extracted = await extractResumeFileContent(file);
+      if (!extracted.isJson && (!extracted.text || extracted.text.trim().length < 10)) {
+        setErrorMessage('Could not extract text from this document. Please verify it is not an image-only scan, or paste the text directly.');
+      } else {
+        setExtractedRawText(extracted.text);
+      }
+    } catch (err: any) {
+      console.warn('File read pre-extract error:', err);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -118,21 +93,22 @@ export const UploadResumeModal: React.FC<UploadResumeModalProps> = ({
           return;
         }
 
-        if (selectedFile.name.endsWith('.json')) {
-          try {
-            const txt = await selectedFile.text();
-            jsonPayload = JSON.parse(txt);
-            isDirectJson = true;
-          } catch {
-            isDirectJson = false;
-          }
+        const extracted = await extractResumeFileContent(selectedFile);
+        if (extracted.isJson && extracted.jsonData) {
+          isDirectJson = true;
+          jsonPayload = extracted.jsonData;
+        } else {
+          rawText = extracted.text;
+          setExtractedRawText(rawText);
         }
 
-        if (!isDirectJson) {
-          rawText = await extractTextFromFile(selectedFile);
+        if (!isDirectJson && (!rawText || rawText.trim().length < 15)) {
+          setErrorMessage('Unable to extract readable text from this file. Please paste your resume text instead.');
+          setIsParsing(false);
+          return;
         }
       } else {
-        if (!pastedText.trim() || pastedText.trim().length < 30) {
+        if (!pastedText.trim() || pastedText.trim().length < 20) {
           setErrorMessage('Please paste at least a few lines of resume or profile text.');
           setIsParsing(false);
           return;
@@ -170,7 +146,7 @@ export const UploadResumeModal: React.FC<UploadResumeModalProps> = ({
     if (!parsedPreview) return;
 
     const title = selectedFile ? selectedFile.name.replace(/\.[^/.]+$/, '') : `${parsedPreview.fullName || 'Parsed'} Resume`;
-    const created = importResume(parsedPreview, title);
+    importResume(parsedPreview, title);
 
     onClose();
     if (onSuccessNavigate) {
@@ -286,7 +262,7 @@ export const UploadResumeModal: React.FC<UploadResumeModalProps> = ({
                     <div className="space-y-1">
                       <p className="text-sm font-bold text-slate-900">{selectedFile.name}</p>
                       <p className="text-xs text-emerald-700 font-semibold">
-                        {(selectedFile.size / 1024).toFixed(1)} KB • Ready for AI Extraction
+                        {(selectedFile.size / 1024).toFixed(1)} KB • Document text extracted cleanly
                       </p>
                       <span className="text-[11px] text-blue-600 underline font-medium mt-1 inline-block">
                         Click to choose a different file
@@ -298,11 +274,40 @@ export const UploadResumeModal: React.FC<UploadResumeModalProps> = ({
                         Drag and drop your resume here, or <span className="text-blue-600 underline">browse</span>
                       </p>
                       <p className="text-xs text-slate-500">
-                        Supported formats: PDF, DOCX, TXT, JSON, MD (Max 10MB)
+                        Supported formats: PDF, DOCX (Word), TXT, JSON, MD (Max 10MB)
                       </p>
                     </div>
                   )}
                 </div>
+
+                {/* Optional Extracted Text Inspection */}
+                {selectedFile && extractedRawText && (
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Clean Text Extracted ({extractedRawText.length} characters)</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowRawExtractedText(!showRawExtractedText);
+                        }}
+                        className="text-[11px] font-bold text-blue-600 hover:text-blue-700 cursor-pointer"
+                      >
+                        {showRawExtractedText ? 'Hide extracted text' : 'Preview extracted text'}
+                      </button>
+                    </div>
+
+                    {showRawExtractedText && (
+                      <div className="p-2.5 bg-white border border-slate-200 rounded-lg max-h-40 overflow-y-auto text-[11px] font-mono text-slate-700 whitespace-pre-wrap">
+                        {extractedRawText.substring(0, 1500)}
+                        {extractedRawText.length > 1500 && ' ...'}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 

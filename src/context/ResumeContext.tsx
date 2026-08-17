@@ -423,80 +423,94 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     addNotification('Cover letter deleted', 'info');
   };
 
-  const importResume = (parsedData: Partial<ResumeData>, customTitle?: string): ResumeData => {
-    const role = parsedData.targetRole || parsedData.personalInfo?.jobTitle || 'Imported Candidate';
+  const importResume = (parsedData: any, customTitle?: string): ResumeData => {
+    const extractedName = parsedData.personalInfo?.fullName || parsedData.fullName || 'Candidate Name';
+    const role = parsedData.personalInfo?.jobTitle || parsedData.jobTitle || parsedData.targetRole || 'Professional';
+    const email = parsedData.personalInfo?.email || parsedData.email || '';
+    const phone = parsedData.personalInfo?.phone || parsedData.phone || '';
+    const location = parsedData.personalInfo?.location || parsedData.location || '';
+    const linkedin = parsedData.personalInfo?.linkedin || parsedData.linkedin || '';
+    const github = parsedData.personalInfo?.github || parsedData.github || '';
+    const website = parsedData.personalInfo?.website || parsedData.website || '';
+
     const newResume: ResumeData = {
       id: 'resume-' + Date.now(),
-      title: customTitle || `${parsedData.personalInfo?.fullName || 'Imported'} Resume`,
+      title: customTitle || `${extractedName !== 'Candidate Name' ? extractedName : 'Imported'} Resume`,
       targetRole: role,
       targetIndustry: parsedData.targetIndustry || 'Technology',
       lastModified: new Date().toISOString(),
       createdAt: new Date().toISOString(),
-      atsScore: parsedData.atsScore || 85,
+      atsScore: parsedData.atsScore || 88,
       personalInfo: {
-        fullName: parsedData.personalInfo?.fullName || 'Imported Candidate',
-        jobTitle: parsedData.personalInfo?.jobTitle || role,
-        email: parsedData.personalInfo?.email || 'email@example.com',
-        phone: parsedData.personalInfo?.phone || '+1 (555) 000-0000',
-        location: parsedData.personalInfo?.location || 'City, State',
-        linkedin: parsedData.personalInfo?.linkedin || '',
-        github: parsedData.personalInfo?.github || '',
-        website: parsedData.personalInfo?.website || '',
+        fullName: extractedName,
+        jobTitle: role,
+        email,
+        phone,
+        location,
+        linkedin,
+        github,
+        website,
       },
       summary:
         parsedData.summary ||
-        'Experienced professional with demonstrated background in project execution, problem solving, and cross-functional leadership.',
+        'Experienced professional with demonstrated background in project execution, problem solving, and team collaboration.',
       experiences:
         parsedData.experiences && parsedData.experiences.length > 0
-          ? parsedData.experiences.map((e, idx) => ({
-              ...e,
+          ? parsedData.experiences.map((e: any, idx: number) => ({
               id: e.id || `exp-imp-${Date.now()}-${idx}`,
+              jobTitle: e.jobTitle || role,
+              company: e.company || 'Organization',
+              location: e.location || 'City, State',
+              startDate: e.startDate || '2022',
+              endDate: e.endDate || 'Present',
+              isCurrent: e.isCurrent ?? (e.endDate === 'Present' || !e.endDate),
+              technologies: e.technologies || [],
+              highlights: Array.isArray(e.highlights) && e.highlights.length > 0 ? e.highlights : ['Led key initiatives and delivered measurable business impact.'],
             }))
-          : [
-              {
-                id: 'exp-imp-1',
-                jobTitle: role,
-                company: 'Key Organization',
-                location: 'City, State',
-                startDate: '2022-01',
-                endDate: 'Present',
-                isCurrent: true,
-                technologies: ['Key Tools', 'Core Skills'],
-                highlights: [
-                  'Spearheaded key initiatives driving measurable operational efficiency and team delivery.',
-                  'Collaborated across cross-functional teams to streamline workflows and improve project outcomes.',
-                ],
-              },
-            ],
+          : [],
       education:
         parsedData.education && parsedData.education.length > 0
-          ? parsedData.education.map((edu, idx) => ({
-              ...edu,
+          ? parsedData.education.map((edu: any, idx: number) => ({
               id: edu.id || `edu-imp-${Date.now()}-${idx}`,
+              degree: edu.degree || 'Degree',
+              fieldOfStudy: edu.fieldOfStudy || '',
+              institution: edu.institution || 'University / Institution',
+              location: edu.location || '',
+              graduationDate: edu.graduationDate || '',
+              gpa: edu.gpa || '',
             }))
-          : [
-              {
-                id: 'edu-imp-1',
-                degree: 'Bachelor of Science / Arts',
-                fieldOfStudy: 'Academic Field',
-                institution: 'University / College',
-                location: 'City, State',
-                graduationDate: '2021',
-              },
-            ],
+          : [],
       skillCategories: parsedData.skillCategories || [
         {
           category: 'Core Competencies',
-          skills: parsedData.skills?.slice(0, 4) || ['Problem Solving', 'Strategic Execution', 'Leadership'],
+          skills: parsedData.skills?.slice(0, 5) || ['Problem Solving', 'Strategic Execution', 'Leadership'],
         },
       ],
       skills: parsedData.skills && parsedData.skills.length > 0
         ? parsedData.skills
         : ['Problem Solving', 'Strategic Execution', 'Leadership', 'Communication', 'Project Management'],
-      projects: parsedData.projects || [],
-      certifications: parsedData.certifications || [],
+      projects: (parsedData.projects || []).map((p: any, idx: number) => ({
+        id: p.id || `proj-imp-${Date.now()}-${idx}`,
+        name: p.name || 'Project',
+        role: p.role || 'Contributor',
+        technologies: p.technologies || [],
+        description: p.description || '',
+        highlights: p.highlights || [],
+      })),
+      certifications: (parsedData.certifications || []).map((c: any, idx: number) => ({
+        id: c.id || `cert-imp-${Date.now()}-${idx}`,
+        name: c.name || 'Certification',
+        issuer: c.issuer || 'Issuing Organization',
+        issueDate: c.issueDate || '',
+      })),
       achievements: parsedData.achievements || [],
-      languages: parsedData.languages || [{ id: 'lang-1', language: 'English', proficiency: 'Fluent' }],
+      languages: parsedData.languages && parsedData.languages.length > 0
+        ? parsedData.languages.map((l: any, idx: number) => ({
+            id: l.id || `lang-${Date.now()}-${idx}`,
+            language: typeof l === 'string' ? l : l.language || 'English',
+            proficiency: typeof l === 'object' && l.proficiency ? l.proficiency : 'Fluent',
+          }))
+        : [{ id: 'lang-1', language: 'English', proficiency: 'Fluent' }],
       volunteer: parsedData.volunteer || [],
       publications: parsedData.publications || [],
       awards: parsedData.awards || [],
